@@ -1,4 +1,16 @@
-Grunt :
+#Mashjobs
+
+Mashup d'API d'offres d'emplois avec backbone.
+
+# Install
+
+   npm install
+
+Run the application
+   grunt
+   go to http://localhost:3000/
+
+Grunt
 	- jsbeautifier : pour indenter correctement tous les fichiers js
 	- express : pour lancer le serveur.js
 	- jshint : pour verifier la syntaxe js
@@ -13,15 +25,3 @@ scripts
 
 assets
 	- Contient tout le css dont les fichiers less
-
-modules
-	- Contient le code du module annuaire légèrement modifié pour pouvoir prendre en compte l'ajout de tag
-
-=======================
-
-Pour installer l'application
-   npm install
-
-Pour lancer l'application (pas par la fenêtre)
-   grunt
-   aller à http://localhost:3000/
