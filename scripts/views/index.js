@@ -23,7 +23,7 @@ define([
             this.render();
         },
         render: function() {
-            // console.log('render view search');
+            console.log('render view search' + this.sid.get('apiUrl'));
             var data = {
                 scb: this.scb,
                 sid: this.sid
@@ -33,21 +33,45 @@ define([
         searchAction: function(event) {
             if (event.keyCode === 13) {
                 this.searchCBAction($('#search').val());
+                // this.searchInAction($('#search').val());
+                console.log('done !!');
             }
         },
         searchCBAction: function(keywords) {
             console.log('search ' + keywords + ' on CB');
             var that = this;
             console.log(this.scb.get('apiUrl'));
-            $.ajax({
-                url: this.scb.get('apiUrl'),
-                dataType: "jsonp text",
+            return $.ajax({
+                url: 'http://proxy.antoine-martin.me/',
                 data: {
                     DeveloperKey: this.scb.get('api_key'),
+                    csurl: this.scb.get('apiUrl')
                 },
             }).success(function(response) {
                 console.log('done ajax scb');
-                console.log(response);
+                $(response).find('Results').each(function() {
+                    console.log($(this));
+                });
+            });
+        },
+        searchInAction: function(keywords) {
+            console.log('search ' + keywords + ' on Indeed');
+            var that = this;
+            console.log(this.sid.get('apiUrl'));
+            return $.ajax({
+                url: this.sid.get('apiUrl'),
+                dataType: "jsonp",
+                headers: {
+                    'Accept': 'application/json'
+                },
+                data: {
+                    publisher: this.sid.get('api_key'),
+                    q: keywords,
+                    v: 2
+                },
+            }).success(function(response) {
+                console.log('done ajax sid');
+                console.log(response.results[0]);
             });
         }
     });

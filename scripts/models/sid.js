@@ -4,7 +4,11 @@ define([
     'use strict';
 
     var jobSearchIndeedModel = Backbone.Model.extend({
-        api: 'http://api.indeed.com/'
+        defaults: {
+            apiUrl: 'http://api.indeed.com/ads/apisearch',
+            api_key: ''
+        }
+
     });
 
     return jobSearchIndeedModel;
