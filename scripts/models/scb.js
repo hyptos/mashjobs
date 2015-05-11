@@ -6,7 +6,7 @@ define([
     var jobSearchModel = Backbone.Model.extend({
         defaults: {
             apiUrl: 'http://api.careerbuilder.com/v2/jobsearch',
-            api_key: '',
+            api_key: 'WDHS42Z6NVCBC17NTKWY',
             title: 'monsupertitre',
             compagny: 'Company',
             compagnyDetailUrl: 'CompanyDetailsURL',

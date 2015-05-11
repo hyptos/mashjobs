@@ -23,6 +23,10 @@ app.get('/lib/:folder/:file', function(req, res) {
     res.sendFile(__dirname + '/node_modules/' + req.params.folder + "/" + req.params.file);
 });
 
+app.get('/fonts/:file', function(req, res) {
+    res.sendFile(__dirname + '/node_modules/' + "bootstrap/fonts/" + req.params.file);
+});
+
 app.get('/lib/:folder/:folder2/:file', function(req, res) {
     res.sendFile(__dirname + '/node_modules/' + req.params.folder + "/" + req.params.folder2 + "/" + req.params.file);
 });
@@ -37,7 +41,8 @@ app.get('/:folder/:file', function(req, res) {
 
 
 
-/* 
+
+/*
  Home
  */
 
