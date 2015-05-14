@@ -17,6 +17,7 @@ define([
         template: _.template(IndexTemplate),
         events: {
             "keypress #search": "searchAction",
+            "keypress #location": "searchAction",
             "click #alignmentSearch": "alignmentSearchAction"
         },
         initialize: function() {
@@ -44,12 +45,12 @@ define([
         },
         searchAction: function(event) {
             if (event.keyCode === 13) {
-                this.searchCBAction($('#search').val(), $("#country").val());
-                this.searchInAction($('#search').val(), $("#country").val());
+                this.searchCBAction($('#search').val(), $("#country").val(), $("#location").val());
+                this.searchInAction($('#search').val(), $("#country").val(), $("#location").val());
                 console.log('done !!');
             }
         },
-        searchCBAction: function(keywords, country) {
+        searchCBAction: function(keywords, country, location) {
             // console.log('search ' + keywords + ' at ' + country + ' on CB');
             var that = this;
             console.log(this.scb.get('apiUrl'));
@@ -58,7 +59,10 @@ define([
                 dataType: 'xml',
                 data: {
                     DeveloperKey: this.scb.get('api_key'),
-                    CountryCode: country.toLowerCase()
+                    CountryCode: country,
+                    Keywords: keywords,
+                    EmpType: 'JTFT', // en dure a changer en tapant dans l'api
+                    Location: location
                 },
             }).success(function(xml) {
                 that.colCB.reset();
@@ -69,7 +73,7 @@ define([
                     var distance = $(this).find('Distance').text();
                     var employmentType = $(this).find('EmploymentType').text();
                     var education = $(this).find('EducationRequired').text();
-                    var location = $(this).find('Location').text();
+                    var locatione = $(this).find('Location').text();
                     var city = $(this).find('City').text();
                     var state = $(this).find('State').text();
                     var postedDate = $(this).find('PostedDate').text();
@@ -79,7 +83,7 @@ define([
                     var jobServiceURL = $(this).find('JobServiceURL').text();
                     var locationLatitude = $(this).find('LocationLatitude').text();
                     var locationLongitude = $(this).find('LocationLongitude').text();
-                    if (company !== 'undefined' && company !== '') {
+                    if (company !== 'undefined') {
                         that.colCB.add({
                             jobtitle: jobtitle,
                             company: company,
@@ -91,7 +95,7 @@ define([
                             jobServiceURL: jobServiceURL,
                             locationLatitude: locationLatitude,
                             locationLongitude: locationLongitude,
-                            location: location,
+                            location: locatione,
                             postedDate: postedDate,
                             pay: pay
                         });
@@ -103,7 +107,7 @@ define([
                 that.render();
             });
         },
-        searchInAction: function(keywords, country) {
+        searchInAction: function(keywords, country, location) {
             // console.log('search ' + keywords + ' at ' + country + 'on Indeed');
             var that = this;
             console.log(this.sid.get('apiUrl'));
@@ -115,8 +119,10 @@ define([
                     q: keywords,
                     v: 2,
                     format: 'json',
-                    l: country,
-                    limit: 20
+                    l: location,
+                    limit: 25,
+                    latlong: 1,
+                    jt: 'fulltime'
                 },
             }).success(function(response) {
                 console.log('done ajax sid');
@@ -139,6 +145,8 @@ define([
                         var jobkey = job.jobkey;
                         var sponsored = job.sponsored;
                         var expired = job.expired;
+                        var latitude = job.latitude;
+                        var longitude = job.longitude;
                         that.colIN.add({
                             jobtitle: jobtitle,
                             company: company,
@@ -152,7 +160,9 @@ define([
                             url: url,
                             jobkey: jobkey,
                             sponsored: sponsored,
-                            expired: expired
+                            expired: expired,
+                            latitude: latitude,
+                            longitude: longitude
                         });
                     }
                 } else {
