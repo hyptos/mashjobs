@@ -6,31 +6,38 @@ define([
     '../models/scb.js',
     '../models/sid.js',
     '../models/country.js',
-    '../collections/countries'
-], function($, _, Backbone, IndexTemplate, CbModel, IndeedModel, CountryModel, CountriesCollection) {
+    '../collections/countries',
+    '../collections/searchCB',
+    '../collections/searchIn',
+], function($, _, Backbone, IndexTemplate, CbModel, IndeedModel, CountryModel, CountriesCollection, CBCollection, INCollection) {
     'use strict';
 
     var indexView = Backbone.View.extend({
         el: $("#app"),
         template: _.template(IndexTemplate),
         events: {
-            "keypress #search": "searchAction"
+            "keypress #search": "searchAction",
+            "click #alignmentSearch": "alignmentSearchAction"
         },
         initialize: function() {
             // console.log("initialize view search");
             this.sid = new IndeedModel();
             this.scb = new CbModel();
+            this.colIN = new INCollection();
+            this.colCB = new CBCollection();
             this.countries = new CountriesCollection();
-            this.getCountries();
+            this.getCountriesAction();
             this.listenTo(this.sid, 'all', this.render);
             this.listenTo(this.scb, 'all', this.render);
             this.render();
         },
         render: function() {
-            console.log('render view search ' + this.sid.get('apiUrl'));
+            // console.log('render view search ' + this.sid.get('apiUrl'));
             var data = {
                 scb: this.scb,
                 sid: this.sid,
+                colCB: this.colCB,
+                colIN: this.colIN,
                 countries: this.countries
             };
             this.$el.html(this.template(data));
@@ -43,7 +50,7 @@ define([
             }
         },
         searchCBAction: function(keywords, country) {
-            console.log('search ' + keywords + ' at ' + country + 'on CB');
+            // console.log('search ' + keywords + ' at ' + country + ' on CB');
             var that = this;
             console.log(this.scb.get('apiUrl'));
             return $.ajax({
@@ -51,9 +58,10 @@ define([
                 dataType: 'xml',
                 data: {
                     DeveloperKey: this.scb.get('api_key'),
-                    CountryCode: country
+                    CountryCode: country.toLowerCase()
                 },
             }).success(function(xml) {
+                that.colCB.reset();
                 $(xml).find('JobSearchResult').each(function(result) {
                     var company = $(this).find('Company').text();
                     var companydid = $(this).find('CompanyDID').text();
@@ -71,26 +79,32 @@ define([
                     var jobServiceURL = $(this).find('JobServiceURL').text();
                     var locationLatitude = $(this).find('LocationLatitude').text();
                     var locationLongitude = $(this).find('LocationLongitude').text();
-                    that.scb.set({
-                        title: jobtitle,
-                        compagny: company,
-                        compagnyDetailUrl: companyDetailUrl,
-                        did: companydid,
-                        distance: distance,
-                        employmentType: employmentType,
-                        jobDetailsURL: jobDetailsURL,
-                        jobServiceURL: jobServiceURL,
-                        locationLatitude: locationLatitude,
-                        locationLongitude: locationLongitude,
-                        location: location,
-                        postedDate: postedDate,
-                        pay: pay
-                    });
+                    if (company !== 'undefined' && company !== '') {
+                        that.colCB.add({
+                            jobtitle: jobtitle,
+                            company: company,
+                            compagnyDetailUrl: companyDetailUrl,
+                            did: companydid,
+                            distance: distance,
+                            employmentType: employmentType,
+                            jobDetailsURL: jobDetailsURL,
+                            jobServiceURL: jobServiceURL,
+                            locationLatitude: locationLatitude,
+                            locationLongitude: locationLongitude,
+                            location: location,
+                            postedDate: postedDate,
+                            pay: pay
+                        });
+                    } else {
+                        that.colCB.reset();
+                    }
                 });
+            }).complete(function() {
+                that.render();
             });
         },
         searchInAction: function(keywords, country) {
-            console.log('search ' + keywords + ' at ' + country + 'on Indeed');
+            // console.log('search ' + keywords + ' at ' + country + 'on Indeed');
             var that = this;
             console.log(this.sid.get('apiUrl'));
             return $.ajax({
@@ -101,44 +115,55 @@ define([
                     q: keywords,
                     v: 2,
                     format: 'json',
-                    l: country
+                    l: country,
+                    limit: 20
                 },
             }).success(function(response) {
                 console.log('done ajax sid');
                 if (response.results.length > 0) {
-                    var jobtitle = response.results[0].jobtitle;
-                    var company = response.results[0].company;
-                    var city = response.results[0].city;
-                    var state = response.results[0].state;
-                    var country = response.results[0].country;
-                    var formattedLocation = response.results[0].formattedLocation;
-                    var source = response.results[0].source;
-                    var date = response.results[0].date;
-                    var snippet = response.results[0].formattedLocation;
-                    var url = response.results[0].url;
-                    var jobkey = response.results[0].jobkey;
-                    var sponsored = response.results[0].sponsored;
-                    var expired = response.results[0].expired;
 
-                    that.sid.set({
-                        jobtitle: jobtitle,
-                        company: company,
-                        city: city,
-                        state: state,
-                        country: country,
-                        formattedLocation: formattedLocation,
-                        source: source,
-                        date: date,
-                        snippet: snippet,
-                        url: url,
-                        jobkey: jobkey,
-                        sponsored: sponsored,
-                        expired: expired
-                    });
+                    that.colIN.reset();
+
+                    for (var res in response.results) {
+                        var job = response.results[res];
+                        var jobtitle = job.jobtitle;
+                        var company = job.company;
+                        var city = job.city;
+                        var state = job.state;
+                        var country = job.country;
+                        var formattedLocation = job.formattedLocation;
+                        var source = job.source;
+                        var date = job.date;
+                        var snippet = job.formattedLocation;
+                        var url = job.url;
+                        var jobkey = job.jobkey;
+                        var sponsored = job.sponsored;
+                        var expired = job.expired;
+                        that.colIN.add({
+                            jobtitle: jobtitle,
+                            company: company,
+                            city: city,
+                            state: state,
+                            country: country,
+                            formattedLocation: formattedLocation,
+                            source: source,
+                            date: date,
+                            snippet: snippet,
+                            url: url,
+                            jobkey: jobkey,
+                            sponsored: sponsored,
+                            expired: expired
+                        });
+                    }
+                } else {
+                    console.log("pas de résultats");
+                    that.colIN.reset();
                 }
+            }).complete(function() {
+                that.render();
             });
         },
-        getCountries: function() {
+        getCountriesAction: function() {
             var that = this;
             $.ajax({
                 url: 'http://localhost:3000/pays.json',
@@ -148,6 +173,23 @@ define([
             }).complete(function() {
                 that.render();
             });
+        },
+        alignmentSearchAction: function() {
+            console.log('comparaison des résultats de chaque api');
+            console.log('comparaison de la raison social');
+            this.compareToModels('company');
+
+        },
+        compareToModels: function(attr) {
+            if (this.sid.get(attr) === this.scb.get(attr)) {
+                console.log(this.sid.get(attr) + ' ==== ' + this.scb.get(attr));
+                return true;
+            } else {
+                console.log(this.sid.get(attr) + ' !=== ' + this.scb.get(attr));
+                return false;
+            }
+
+            return this.sid.get(attr) === this.scb.get(attr);
         }
     });
     return indexView;

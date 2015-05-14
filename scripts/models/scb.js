@@ -8,7 +8,7 @@ define([
             apiUrl: 'http://api.careerbuilder.com/v2/jobsearch',
             api_key: 'WDHS42Z6NVCBC17NTKWY',
             title: 'monsupertitre',
-            compagny: 'Company',
+            company: 'Company',
             compagnyDetailUrl: 'CompanyDetailsURL',
             did: 'DID',
             distance: 'Distance',

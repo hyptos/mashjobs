@@ -1,44 +1,61 @@
 <div class="col-md-10 col-md-offset-1 jumbotron">
-
-<div class="form-inline">
-      <div class="input-group">
-        <input value="python" id="search" class="form-control" placeholder="Job offer keywords">
-        <div class="input-group-btn">
-            <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+    <div class="form-inline">
+          <div class="input-group">
+            <input value="python" id="search" class="form-control" placeholder="Job offer keywords">
+            <div class="input-group-btn">
+                <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+            </div>
         </div>
-    </div>
 
-    <select id="country" class="form-control">
-      <%
-        _.each(countries.models,function(model){
-                if(model.get('code') === 'US'){
+        <select id="country" class="form-control">
+          <%
+            countries.each(function(model){
+                    if(model.get('code') === 'US'){
                     %>
-                    <option selected="selected" value='<%=model.get('code')%>'><%=model.get('name')%></option>
+                        <option selected="selected" value='<%=model.get('code')%>'><%=model.get('name')%></option>
                     <%
-                }
+                    }
+                %>
+                    <option value='<%=model.get('code')%>'><%=model.get('name')%></option>
+                <%
+            });
             %>
-                <option value='<%=model.get('code')%>'><%=model.get('name')%></option>
+        </select>
+    </div>
+</div>
 
-            <%
-        });
-        %>
-    </select>
-</div>
-</div>
 <div class="text-center col-md-10 col-md-offset-1">
     <h2>Step 1 : search</h2>
 </div>
 <div class="col-md-5 col-md-offset-1 jumbotron">
     <h2>Source CarrerBuilder</h2>
-    <pre><%=JSON.stringify(scb,undefined, 2)%>
-    </pre>
+    <ul>
+
+    <%
+    colCB.each(function(model){
+    %>
+        <li><a href="<%=model.get('jobDetailsURL')%>" ><b><%=model.get('company')%></b> - <%=model.get('jobtitle')%></a></li>
+    <% }); %>
+    </ul>
 </div>
 
 <div class="col-md-5 jumbotron">
     <h2>Source Indeed</h2>
-    <pre><%=JSON.stringify(sid,undefined, 2)%>
-    </pre>
+    <ul>
+
+    <%
+    colIN.each(function(model){
+    %>
+        <li><a href="<%=model.get('url')%>" ><b><%=model.get('company')%></b> - <%=model.get('jobtitle')%></a></li>
+    <% }); %>
+    </ul>
 </div>
+
+<div class="col-md-10 jumbotron col-md-offset-1">
+    <button id="alignmentSearch" class="btn btn-default">Alignement de la recherche</button>
+</div>
+
+
 <div class="text-center col-md-10 col-md-offset-1">
     <h2>Step 2 : match jobs</h2>
 </div>
