@@ -28,37 +28,41 @@
     </div>
 </div>
 
-<div class="text-center col-md-10 col-md-offset-1">
-    <h2>Step 1 : search</h2>
+<div id="searchContent">
+    <div class="text-center col-md-10 col-md-offset-1">
+        <h2>Step 1 : search</h2>
+    </div>
+    <div class="col-md-5 col-md-offset-1 jumbotron">
+        <h2>Source CarrerBuilder</h2>
+        <ul>
+
+        <%
+        colCB.each(function(model){
+        %>
+            <li>
+                <a data="<%=model.cid%>" href="<%=model.get('jobDetailsURL')%>" class="chooseCbJob"><b><%=model.get('company')%></b> - <%=model.get('jobtitle')%>
+                </a>
+            </li>
+        <% }); %>
+        </ul>
+    </div>
+
+    <div class="col-md-5 jumbotron">
+        <h2>Source Indeed</h2>
+        <ul>
+
+        <%
+        colIN.each(function(model){
+        %>
+            <li>
+                <a data="<%=model.cid%>" href="<%=model.get('url')%>" class="chooseInJob">
+                    <b><%=model.get('company')%></b> - <%=model.get('jobtitle')%>
+                </a>
+            </li>
+        <% }); %>
+        </ul>
+    </div>
 </div>
-<div class="col-md-5 col-md-offset-1 jumbotron">
-    <h2>Source CarrerBuilder</h2>
-    <ul>
-
-    <%
-    colCB.each(function(model){
-    %>
-        <li><a href="<%=model.get('jobDetailsURL')%>" ><b><%=model.get('company')%></b> - <%=model.get('jobtitle')%></a></li>
-    <% }); %>
-    </ul>
-</div>
-
-<div class="col-md-5 jumbotron">
-    <h2>Source Indeed</h2>
-    <ul>
-
-    <%
-    colIN.each(function(model){
-    %>
-        <li><a href="<%=model.get('url')%>" ><b><%=model.get('company')%></b> - <%=model.get('jobtitle')%></a></li>
-    <% }); %>
-    </ul>
-</div>
-
-<div class="col-md-10 jumbotron col-md-offset-1">
-    <button id="alignmentSearch" class="btn btn-default">Alignement de la recherche</button>
-</div>
-
 
 <div class="text-center col-md-10 col-md-offset-1">
     <h2>Step 2 : match jobs</h2>

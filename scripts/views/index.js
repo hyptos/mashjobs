@@ -18,7 +18,9 @@ define([
         events: {
             "keypress #search": "searchAction",
             "keypress #location": "searchAction",
-            "click #alignmentSearch": "alignmentSearchAction"
+            "click #alignmentSearch": "alignmentSearchAction",
+            "click .chooseCbJob": "chooseJobCbAction",
+            "click .chooseInJob": "chooseJobInAction",
         },
         initialize: function() {
             // console.log("initialize view search");
@@ -52,8 +54,8 @@ define([
         },
         searchCBAction: function(keywords, country, location) {
             // console.log('search ' + keywords + ' at ' + country + ' on CB');
-            var that = this;
             console.log(this.scb.get('apiUrl'));
+            var that = this;
             return $.ajax({
                 url: this.scb.get('apiUrl'),
                 dataType: 'xml',
@@ -109,8 +111,8 @@ define([
         },
         searchInAction: function(keywords, country, location) {
             // console.log('search ' + keywords + ' at ' + country + 'on Indeed');
-            var that = this;
             console.log(this.sid.get('apiUrl'));
+            var that = this;
             return $.ajax({
                 url: this.sid.get('apiUrl'),
                 dataType: "jsonp",
@@ -200,6 +202,40 @@ define([
             }
 
             return this.sid.get(attr) === this.scb.get(attr);
+        },
+        chooseJobInAction : function(e){
+            e.preventDefault();
+            var that = this;
+            var data = $(e.currentTarget).attr("data");
+            this.sid = this.colIN.get(data);
+            this.searchCBAction(this.sid.get('jobtitle'),$("#country").val(), $("#location").val()).complete(function()
+            {
+                that.colCB.each(function(model){
+                    if(model.get('jobtitle') === that.sid.get('jobtitle')){
+                        that.scb = model;
+                    }
+                });
+                // that.animateSearch();
+            });
+        },
+        chooseJobCbAction : function(e){
+            e.preventDefault();
+            var that = this;
+            var data = $(e.currentTarget).attr("data");
+            this.scb = this.colCB.get(data);
+            this.searchInAction(this.scb.get('jobtitle'),$("#country").val(), $("#location").val()).complete(function()
+            {
+                console.log('hey');
+                that.colIN.each(function(model){
+                    if(model.get('jobtitle') === that.scb.get('jobtitle')){
+                        that.sid = model;
+                    }
+                });
+                // that.animateSearch();
+            });
+        },
+        animateSearch : function(){
+            $('#searchContent').fadeOut();
         }
     });
     return indexView;
