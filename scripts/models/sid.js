@@ -19,7 +19,8 @@ define([
             url: 'url',
             jobkey: 'jobkey',
             sponsored: 'sponsored',
-            expired: 'expired'
+            expired: 'expired',
+            totalResults:'0'
         }
 
     });

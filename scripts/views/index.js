@@ -46,9 +46,15 @@ define([
             this.$el.html(this.template(data));
         },
         searchAction: function(event) {
+            var search = $('#search').val();
+            var country = $("#country").val();
+            var location = $('#location').val();
+            console.log($('#totalIndeedResults').text());
             if (event.keyCode === 13) {
-                this.searchCBAction($('#search').val(), $("#country").val(), $("#location").val());
-                this.searchInAction($('#search').val(), $("#country").val(), $("#location").val());
+                this.searchCBAction(search, country, location);
+                for(var start = 0; start <= $('#totalIndeedResults').text(); start += 100){
+                    this.searchInAction(search, country, location, start);
+                }
                 console.log('done !!');
             }
         },
@@ -109,10 +115,11 @@ define([
                 that.render();
             });
         },
-        searchInAction: function(keywords, country, location) {
+        searchInAction: function(keywords, country, location, start) {
             // console.log('search ' + keywords + ' at ' + country + 'on Indeed');
             console.log(this.sid.get('apiUrl'));
             var that = this;
+            start = start || 0;
             return $.ajax({
                 url: this.sid.get('apiUrl'),
                 dataType: "jsonp",
@@ -122,16 +129,15 @@ define([
                     v: 2,
                     format: 'json',
                     l: location,
-                    limit: 25,
+                    co:country,
+                    limit: 100,
                     latlong: 1,
-                    jt: 'fulltime'
+                    jt: 'fulltime',
+                    start:start
                 },
             }).success(function(response) {
-                console.log('done ajax sid');
+                console.log('done ajax sid from ' + start + ' to '+ response.totalResults);
                 if (response.results.length > 0) {
-
-                    that.colIN.reset();
-
                     for (var res in response.results) {
                         var job = response.results[res];
                         var jobtitle = job.jobtitle;
@@ -149,6 +155,7 @@ define([
                         var expired = job.expired;
                         var latitude = job.latitude;
                         var longitude = job.longitude;
+
                         that.colIN.add({
                             jobtitle: jobtitle,
                             company: company,
@@ -164,7 +171,8 @@ define([
                             sponsored: sponsored,
                             expired: expired,
                             latitude: latitude,
-                            longitude: longitude
+                            longitude: longitude,
+                            totalResults: response.totalResults
                         });
                     }
                 } else {
@@ -203,38 +211,36 @@ define([
 
             return this.sid.get(attr) === this.scb.get(attr);
         },
-        chooseJobInAction : function(e){
+        chooseJobInAction: function(e) {
             e.preventDefault();
             var that = this;
             var data = $(e.currentTarget).attr("data");
             this.sid = this.colIN.get(data);
-            this.searchCBAction(this.sid.get('jobtitle'),$("#country").val(), $("#location").val()).complete(function()
-            {
-                that.colCB.each(function(model){
-                    if(model.get('jobtitle') === that.sid.get('jobtitle')){
+            this.searchCBAction(this.sid.get('jobtitle'), $("#country").val(), $("#location").val()).complete(function() {
+                that.colCB.each(function(model) {
+                    if (model.get('jobtitle') === that.sid.get('jobtitle')) {
                         that.scb = model;
                     }
                 });
                 // that.animateSearch();
             });
         },
-        chooseJobCbAction : function(e){
+        chooseJobCbAction: function(e) {
             e.preventDefault();
             var that = this;
             var data = $(e.currentTarget).attr("data");
             this.scb = this.colCB.get(data);
-            this.searchInAction(this.scb.get('jobtitle'),$("#country").val(), $("#location").val()).complete(function()
-            {
+            this.searchInAction(this.scb.get('jobtitle'), $("#country").val(), $("#location").val()).complete(function() {
                 console.log('hey');
-                that.colIN.each(function(model){
-                    if(model.get('jobtitle') === that.scb.get('jobtitle')){
+                that.colIN.each(function(model) {
+                    if (model.get('jobtitle') === that.scb.get('jobtitle')) {
                         that.sid = model;
                     }
                 });
                 // that.animateSearch();
             });
         },
-        animateSearch : function(){
+        animateSearch: function() {
             $('#searchContent').fadeOut();
         }
     });

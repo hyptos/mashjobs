@@ -52,7 +52,9 @@
         <ul>
 
         <%
+        var nb = 0;
         colIN.each(function(model){
+            nb = model.get('totalResults');
         %>
             <li>
                 <a data="<%=model.cid%>" href="<%=model.get('url')%>" class="chooseInJob">
@@ -61,6 +63,18 @@
             </li>
         <% }); %>
         </ul>
+        <%
+            if(colCB.length > 0){
+                %>
+                <p id="">Total results : <span id="totalIndeedResults"><%=nb%></span></p>
+            <%
+            } else {
+                %>
+                <p id="">Total results : <span id="totalIndeedResults">0</span></p>
+
+                <%
+            }
+        %>
     </div>
 </div>
 
