@@ -5,11 +5,12 @@ define([
     'text!templates/index.html',
     '../models/scb.js',
     '../models/sid.js',
+    '../models/mashup.js',
     '../models/country.js',
     '../collections/countries',
     '../collections/searchCB',
     '../collections/searchIn',
-], function($, _, Backbone, IndexTemplate, CbModel, IndeedModel, CountryModel, CountriesCollection, CBCollection, INCollection) {
+], function($, _, Backbone, IndexTemplate, CbModel, IndeedModel, MashupModel, CountryModel, CountriesCollection, CBCollection, INCollection) {
     'use strict';
 
     var indexView = Backbone.View.extend({
@@ -28,10 +29,12 @@ define([
             this.scb = new CbModel();
             this.colIN = new INCollection();
             this.colCB = new CBCollection();
+            this.mashup = new MashupModel();
             this.countries = new CountriesCollection();
             this.getCountriesAction();
             this.listenTo(this.sid, 'all', this.render);
             this.listenTo(this.scb, 'all', this.render);
+            this.listenTo(this.mashup, 'all', this.render);
             this.render();
         },
         render: function() {
@@ -41,6 +44,7 @@ define([
                 sid: this.sid,
                 colCB: this.colCB,
                 colIN: this.colIN,
+                mashup: this.mashup,
                 countries: this.countries
             };
             this.$el.html(this.template(data));
@@ -134,7 +138,7 @@ define([
                     format: 'json',
                     l: location,
                     co: country,
-                    limit: 100,
+                    limit: 90,
                     latlong: 1,
                     jt: 'fulltime',
                     start: start
@@ -198,10 +202,21 @@ define([
                 that.render();
             });
         },
-        alignmentSearchAction: function() {
-            console.log('comparaison des résultats de chaque api');
-            console.log('comparaison de la raison social');
-            this.compareToModels('company');
+        alignmentSearchAction: function(e) {
+            e.preventDefault();
+            this.mashup.set({
+                title: this.scb.get('jobtitle'),
+                company: this.scb.get('company'),
+                date: this.sid.get('date'),
+                city: this.sid.get('city'),
+                state: this.sid.get('state'),
+                country: this.sid.get('country'),
+                longitude: this.scb.get('locationLongitude'),
+                latitude: this.scb.get('locationLatitude'),
+                employmentType: this.scb.get('employmentType'),
+                pay: this.scb.get('pay'),
+                snippet: this.sid.get('snippet')
+            });
 
         },
         compareToModels: function(left, right, attr) {

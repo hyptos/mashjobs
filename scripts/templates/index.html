@@ -101,6 +101,13 @@
     <ul>
         <li><b>titre</b>: <%=scb.get('jobtitle')%></li>
         <li><b>company</b>: <%=scb.get('company')%></li>
+        <li><b>distance</b>: <%=scb.get('distance')%></li>
+        <li><b>employmentType</b>: <%=scb.get('employmentType')%></li>
+        <li><b>locationLatitude</b>: <%=scb.get('locationLatitude')%></li>
+        <li><b>locationLongitude</b>: <%=scb.get('locationLongitude')%></li>
+        <li><b>location</b>: <%=scb.get('location')%></li>
+        <li><b>pay</b>: <%=scb.get('pay')%></li>
+        <li><b>postedDate</b>: <%=scb.get('postedDate')%></li>
     </ul>
 </div>
 
@@ -109,15 +116,27 @@
     <ul>
         <li><b>titre</b>: <%=sid.get('jobtitle')%></li>
         <li><b>company</b>: <%=sid.get('company')%></li>
+        <li><b>city</b>: <%=sid.get('city')%></li>
+        <li><b>state</b>: <%=sid.get('state')%></li>
+        <li><b>country</b>: <%=sid.get('country')%></li>
+        <li><b>source</b>: <%=sid.get('source')%></li>
+        <li><b>date</b>: <%=sid.get('date')%></li>
+        <li><b>snippet</b>: <%=sid.get('snippet')%></li>
+        <li><b>latitude</b>: <%=sid.get('latitude')%></li>
+        <li><b>longitude</b>: <%=sid.get('longitude')%></li>
     </ul>
     </pre>
 </div>
 
+
+<div class="text-center col-md-10 col-md-offset-1">
+    <button id="alignmentSearch">Alignement des jobs</button>
+</div>
 <div class="text-center col-md-10 col-md-offset-1">
     <h2>Step 3 : mashup</h2>
 </div>
 <div class="col-md-10 jumbotron col-md-offset-1">
     <h2>Mashup</h2>
-    <pre><%=JSON.stringify(sid,undefined, 2)%>
+    <pre><%=JSON.stringify(mashup,undefined, 2)%>
     </pre>
 </div>
