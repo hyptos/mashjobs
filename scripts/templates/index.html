@@ -37,7 +37,9 @@
         <ul>
 
         <%
+        var nb = 0;
         colCB.each(function(model){
+            nb = model.get('totalResults');
         %>
             <li>
                 <a data="<%=model.cid%>" href="<%=model.get('jobDetailsURL')%>" class="chooseCbJob"><b><%=model.get('company')%></b> - <%=model.get('jobtitle')%>
@@ -45,6 +47,19 @@
             </li>
         <% }); %>
         </ul>
+        <%
+        if(colCB.length > 0){
+            %>
+                <p id="">Total results : <span id="totalIndeedResults"><%=nb%></span></p>
+            <%
+        } else {
+            %>
+                <p id="">Total results : <span id="totalIndeedResults">0</span></p>
+
+            <%
+        }
+            %>
+
     </div>
 
     <div class="col-md-5 jumbotron">
@@ -52,7 +67,7 @@
         <ul>
 
         <%
-        var nb = 0;
+        nb = 0;
         colIN.each(function(model){
             nb = model.get('totalResults');
         %>
@@ -64,7 +79,7 @@
         <% }); %>
         </ul>
         <%
-            if(colCB.length > 0){
+            if(colIN.length > 0){
                 %>
                 <p id="">Total results : <span id="totalIndeedResults"><%=nb%></span></p>
             <%
@@ -83,13 +98,18 @@
 </div>
 <div class="col-md-5 col-md-offset-1 jumbotron">
     <h2>Source CarrerBuilder</h2>
-    <pre><%=JSON.stringify(scb,undefined, 2)%>
-    </pre>
+    <ul>
+        <li><b>titre</b>: <%=scb.get('jobtitle')%></li>
+        <li><b>company</b>: <%=scb.get('company')%></li>
+    </ul>
 </div>
 
 <div class="col-md-5 jumbotron">
     <h2>Source Indeed</h2>
-    <pre><%=JSON.stringify(sid,undefined, 2)%>
+    <ul>
+        <li><b>titre</b>: <%=sid.get('jobtitle')%></li>
+        <li><b>company</b>: <%=sid.get('company')%></li>
+    </ul>
     </pre>
 </div>
 

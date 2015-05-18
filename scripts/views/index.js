@@ -49,12 +49,12 @@ define([
             var search = $('#search').val();
             var country = $("#country").val();
             var location = $('#location').val();
-            console.log($('#totalIndeedResults').text());
+            var start = 0;
+            this.colCB.reset();
+            this.colIN.reset();
             if (event.keyCode === 13) {
-                this.searchCBAction(search, country, location);
-                for(var start = 0; start <= $('#totalIndeedResults').text(); start += 100){
-                    this.searchInAction(search, country, location, start);
-                }
+                this.searchCBAction(search, country, location, 0);
+                this.searchInAction(search, country, location, start);
                 console.log('done !!');
             }
         },
@@ -68,12 +68,14 @@ define([
                 data: {
                     DeveloperKey: this.scb.get('api_key'),
                     CountryCode: country,
-                    Keywords: keywords,
+                    JobTitle: keywords,
                     EmpType: 'JTFT', // en dure a changer en tapant dans l'api
-                    Location: location
+                    Location: location,
+                    PerPage: 100
                 },
             }).success(function(xml) {
-                that.colCB.reset();
+                var totalCount = $(xml).find('TotalCount').text();
+                console.log('done ajax scb from ' + 0 + ' to ' + totalCount);
                 $(xml).find('JobSearchResult').each(function(result) {
                     var company = $(this).find('Company').text();
                     var companydid = $(this).find('CompanyDID').text();
@@ -91,6 +93,7 @@ define([
                     var jobServiceURL = $(this).find('JobServiceURL').text();
                     var locationLatitude = $(this).find('LocationLatitude').text();
                     var locationLongitude = $(this).find('LocationLongitude').text();
+
                     if (company !== 'undefined') {
                         that.colCB.add({
                             jobtitle: jobtitle,
@@ -105,7 +108,8 @@ define([
                             locationLongitude: locationLongitude,
                             location: locatione,
                             postedDate: postedDate,
-                            pay: pay
+                            pay: pay,
+                            totalResults: totalCount
                         });
                     } else {
                         that.colCB.reset();
@@ -125,18 +129,18 @@ define([
                 dataType: "jsonp",
                 data: {
                     publisher: this.sid.get('api_key'),
-                    q: keywords,
+                    q: 'title:' + keywords,
                     v: 2,
                     format: 'json',
                     l: location,
-                    co:country,
+                    co: country,
                     limit: 100,
                     latlong: 1,
                     jt: 'fulltime',
-                    start:start
+                    start: start
                 },
             }).success(function(response) {
-                console.log('done ajax sid from ' + start + ' to '+ response.totalResults);
+                console.log('done ajax sid from ' + start + ' to ' + response.totalResults);
                 if (response.results.length > 0) {
                     for (var res in response.results) {
                         var job = response.results[res];
@@ -200,12 +204,12 @@ define([
             this.compareToModels('company');
 
         },
-        compareToModels: function(attr) {
-            if (this.sid.get(attr) === this.scb.get(attr)) {
-                console.log(this.sid.get(attr) + ' ==== ' + this.scb.get(attr));
+        compareToModels: function(left, right, attr) {
+            if (left.get(attr) === right.get(attr)) {
+                console.log(left.get(attr) + ' ==== ' + right.get(attr));
                 return true;
             } else {
-                console.log(this.sid.get(attr) + ' !=== ' + this.scb.get(attr));
+                // console.log(left.get(attr) + ' !=== ' + right.get(attr));
                 return false;
             }
 
@@ -216,13 +220,16 @@ define([
             var that = this;
             var data = $(e.currentTarget).attr("data");
             this.sid = this.colIN.get(data);
+            this.colCB.reset();
             this.searchCBAction(this.sid.get('jobtitle'), $("#country").val(), $("#location").val()).complete(function() {
                 that.colCB.each(function(model) {
-                    if (model.get('jobtitle') === that.sid.get('jobtitle')) {
-                        that.scb = model;
+                    if (that.compareToModels(that.sid, model, 'jobtitle')) {
+                        if (that.compareToModels(that.sid, model, 'company')) {
+                            that.scb.set(model.toJSON());
+                        }
+                        that.animateSearch();
                     }
                 });
-                // that.animateSearch();
             });
         },
         chooseJobCbAction: function(e) {
@@ -230,14 +237,16 @@ define([
             var that = this;
             var data = $(e.currentTarget).attr("data");
             this.scb = this.colCB.get(data);
+            this.colIN.reset();
             this.searchInAction(this.scb.get('jobtitle'), $("#country").val(), $("#location").val()).complete(function() {
-                console.log('hey');
                 that.colIN.each(function(model) {
-                    if (model.get('jobtitle') === that.scb.get('jobtitle')) {
-                        that.sid = model;
+                    if (that.compareToModels(that.scb, model, 'jobtitle')) {
+                        if (that.compareToModels(that.scb, model, 'company')) {
+                            that.sid.set(model.toJSON());
+                        }
+                        that.animateSearch();
                     }
                 });
-                // that.animateSearch();
             });
         },
         animateSearch: function() {
