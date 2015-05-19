@@ -3,6 +3,7 @@ require.config({
         'jquery': 'lib/jquery/dist/jquery',
         'underscore': 'lib/underscore/underscore',
         'backbone': 'lib/backbone/backbone',
+        'lie': 'lib/lie/dist/lie',
         'text': '/lib/text'
     },
     shim: {
@@ -14,7 +15,7 @@ require.config({
             deps: ['jquery', 'underscore']
         }
     },
-    deps: ['jquery', 'underscore', 'backbone']
+    deps: ['jquery', 'underscore', 'backbone', 'lie']
 });
 
 require([

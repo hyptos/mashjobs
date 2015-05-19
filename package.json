@@ -13,8 +13,7 @@
     "grunt-express": "1.0",
     "body-parser": "^1.8.1",
     "express": "",
-    "requirejs": "",
-    "promise": "~7.0.0"
+    "requirejs": ""
   },
   "author": "",
   "license": "ISC",
@@ -25,6 +24,7 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-jsbeautifier": "^0.2.10",
     "google-maps": "~2.1.1",
-    "grunt-prettify": "~0.4.0"
+    "grunt-prettify": "~0.4.0",
+    "lie": "~2.8.1"
   }
 }
