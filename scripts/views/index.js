@@ -35,6 +35,7 @@ define([
             this.listenTo(this.sid, 'all', this.render);
             this.listenTo(this.scb, 'all', this.render);
             this.listenTo(this.mashup, 'all', this.render);
+            this.nb = 0;
             this.render();
         },
         render: function() {
@@ -76,12 +77,12 @@ define([
                 snippet: this.sid.get('snippet')
             });
         },
-        compareToModels: function(left, right, attr) {
-            if (left.get(attr) === right.get(attr)) {
-                console.log(left.get(attr) + ' ==== ' + right.get(attr));
+        compareToModels: function(cb, indeed, attr) {
+            if (cb.get(attr) === indeed.get(attr)) {
+                console.log(cb.get(attr) + ' ==== ' + indeed.get(attr));
                 return true;
             } else {
-                // console.log(left.get(attr) + ' !=== ' + right.get(attr));
+                // console.log(cb.get(attr) + ' !=== ' + indeed.get(attr));
                 return false;
             }
 
@@ -103,10 +104,10 @@ define([
                     if (that.compareToModels(that.sid, model, 'jobtitle')) {
                         if (that.compareToModels(that.sid, model, 'company')) {
                             that.scb.set(model.toJSON());
+                            // that.animateSearch();
                         } else {
                             console.log('pas la meme company');
                         }
-                        that.animateSearch();
                     }
                 });
             }).catch(function(err) {
@@ -130,7 +131,7 @@ define([
                         if (that.compareToModels(that.scb, model, 'company')) {
                             that.sid.set(model.toJSON());
                         }
-                        that.animateSearch();
+                        // that.animateSearch();
                     }
                 });
             }).catch(function(err) {
@@ -213,7 +214,7 @@ define([
                         format: 'json',
                         l: location,
                         co: country,
-                        limit: 90,
+                        limit: 25,
                         latlong: 1,
                         jt: 'fulltime',
                         start: start
@@ -225,8 +226,9 @@ define([
         },
         pSearchINActionRes: function(search, country, location, start) {
             var self = this;
-            return this.psearchINAction(search, country, location, 0).then(function(response) {
+            return this.psearchINAction(search, country, location, start).then(function(response) {
                 console.log('done ajax sid from ' + start + ' to ' + response.totalResults);
+                // if we got results
                 if (response.results.length > 0) {
                     _.each(response.results, function(job) {
                         // add to collection every jobs
@@ -249,12 +251,26 @@ define([
                             totalResults: response.totalResults
                         });
                     });
+                    // else we clear the collection
                 } else {
                     console.log("pas de résultats");
                     self.colIN.reset();
                 }
             }).then(function() {
                 self.render();
+            }).then(function(){
+                var search = $('#search').val();
+                var country = $("#country").val();
+                var location = $('#location').val();
+                setTimeout(function(){
+                    var limit = parseInt($('#totalIndeedResults').text());
+                    if(self.nb < limit){
+                        console.log(self.nb<limit);
+                        self.pSearchINActionRes(search, country, location, self.nb);
+                    }
+                    self.nb += 25;
+                }, 250);
+
             }).catch(function(err) {
                 console.log(err);
             });
