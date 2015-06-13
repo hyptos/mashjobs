@@ -1,0 +1,148 @@
+<div class="col-md-10 col-md-offset-1 jumbotron">
+    <div class="form-inline">
+          <div class="input-group">
+            <input value="python" id="search" class="form-control" placeholder="Job offer keywords">
+            <div class="input-group-btn">
+                <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+            </div>
+            <input value="Boston" id="location" class="form-control" placeholder="location">
+            <div class="input-group-btn">
+                <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-map-marker"></i></button>
+            </div>
+        </div>
+
+        <select id="country" class="form-control">
+          <%
+            countries.each(function(model){
+                    if(model.get('code') === 'US'){
+                    %>
+                        <option selected="selected" value='<%=model.get('code')%>'><%=model.get('name')%></option>
+                    <%
+                    }
+                %>
+                    <option value='<%=model.get('code')%>'><%=model.get('name')%></option>
+                <%
+            });
+            %>
+        </select>
+    </div>
+</div>
+
+<div id="searchContent">
+    <div class="text-center col-md-10 col-md-offset-1">
+        <h2>Step 1 : search</h2>
+    </div>
+    <div class="col-md-5 col-md-offset-1 jumbotron">
+        <h2>Source CarrerBuilder</h2>
+        <ul>
+
+        <%
+        var nb = 0;
+        colCB.each(function(model){
+            nb = model.get('totalResults');
+        %>
+            <li>
+                <a data="<%=model.cid%>" href="<%=model.get('jobDetailsURL')%>" class="chooseCbJob"><b><%=model.get('company')%></b> - <%=model.get('jobtitle')%>
+                </a>
+            </li>
+        <% }); %>
+        </ul>
+        <%
+        if(colCB.length > 0){
+            %>
+                <p id="">Total results : <span id="totalCbResults"><%=nb%></span></p>
+            <%
+        } else {
+            %>
+                <p id="">Total results : <span id="totalIndeedResults">0</span></p>
+
+            <%
+        }
+            %>
+
+    </div>
+
+    <div class="col-md-5 jumbotron">
+        <h2>Source Indeed</h2>
+        <ul>
+
+        <%
+        nb = 0;
+        colIN.each(function(model){
+            nb = model.get('totalResults');
+        %>
+            <li>
+                <a data="<%=model.cid%>" href="<%=model.get('url')%>" class="chooseInJob">
+                    <b><%=model.get('company')%></b> - <%=model.get('jobtitle')%>
+                </a>
+            </li>
+        <% }); %>
+        </ul>
+        <%
+            if(colIN.length > 0){
+                %>
+                <p id="">Total results : <span id="totalIndeedResults"><%=nb%></span></p>
+            <%
+            } else {
+                %>
+                <p id="">Total results : <span id="totalIndeedResults">0</span></p>
+
+                <%
+            }
+        %>
+    </div>
+</div>
+
+<div class="text-center col-md-10 col-md-offset-1">
+    <h2>Step 2 : match jobs</h2>
+</div>
+<div class="col-md-5 col-md-offset-1 jumbotron">
+    <h2>Source CarrerBuilder</h2>
+    <ul>
+        <li><b>titre</b>: <%=scb.get('jobtitle')%></li>
+        <li><b>company</b>: <%=scb.get('company')%></li>
+        <li><b>distance</b>: <%=scb.get('distance')%></li>
+        <li><b>city</b>: <%=scb.get('city')%></li>
+        <li><b>state</b>: <%=scb.get('state')%></li>
+        <li><b>employmentType</b>: <%=scb.get('employmentType')%></li>
+        <li><b>locationLatitude</b>: <%=scb.get('locationLatitude')%></li>
+        <li><b>locationLongitude</b>: <%=scb.get('locationLongitude')%></li>
+        <li><b>location</b>: <%=scb.get('location')%></li>
+        <li><b>pay</b>: <%=scb.get('pay')%></li>
+        <li><b>postedDate</b>: <%=scb.get('postedDate')%></li>
+        <li><b>compagnyDetailUrl</b>: <%=scb.get('compagnyDetailUrl')%></li>
+        <li><b>education</b>: <%=scb.get('education')%></li>
+        <li><b>jobDetailsURL</b>: <%=scb.get('jobDetailsURL')%></li>
+        <li><b>jobServiceURL</b>: <%=scb.get('jobServiceURL')%></li>
+    </ul>
+</div>
+
+<div class="col-md-5 jumbotron">
+    <h2>Source Indeed</h2>
+    <ul>
+        <li><b>titre</b>: <%=sid.get('jobtitle')%></li>
+        <li><b>company</b>: <%=sid.get('company')%></li>
+        <li><b>city</b>: <%=sid.get('city')%></li>
+        <li><b>state</b>: <%=sid.get('state')%></li>
+        <li><b>country</b>: <%=sid.get('country')%></li>
+        <li><b>source</b>: <%=sid.get('source')%></li>
+        <li><b>date</b>: <%=sid.get('date')%></li>
+        <li><b>snippet</b>: <%=sid.get('snippet')%></li>
+        <li><b>latitude</b>: <%=sid.get('latitude')%></li>
+        <li><b>longitude</b>: <%=sid.get('longitude')%></li>
+    </ul>
+    </pre>
+</div>
+
+
+<div class="text-center col-md-10 col-md-offset-1">
+    <button class="btn btn-primary btn-lg" id="alignmentSearch">Alignement des jobs</button>
+</div>
+<div class="text-center col-md-10 col-md-offset-1">
+    <h2>Step 3 : mashup</h2>
+</div>
+<div class="col-md-10 jumbotron col-md-offset-1">
+    <h2>Mashup</h2>
+    <pre><%=JSON.stringify(mashup,undefined, 2)%>
+    </pre>
+</div>

@@ -1,2 +1,3 @@
-/cache/
-/config/development/
+/node_modules/
+assets/css/*
+/.idea/

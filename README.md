@@ -1,17 +1,30 @@
-# mashjobs
+#Mashjobs
 
-Indeed  :http://www.indeed.com/jsp/apiinfo.jsp
+Mashup d'API d'offres d'emplois avec backbone.
 
-http://partner.monster.com/job-search-specification
+## Install
+A la racine du projet, dans une console :
 
-https://www.elance.com/
+```
+   npm install
+```
 
-https://angel.co/api/spec/jobs
+Run the application
 
-https://developers.odesk.com/?lang=python
+```
+   grunt
+```
 
-https://www.reddit.com/r/forhire/
+Go to http://localhost:3000/
 
-LinkedIn.com
+## Grunt tasks
 
-SimplyHired.com
+* jsbeautifier : pour indenter correctement tous les fichiers js
+
+* express : pour lancer le serveur.js
+
+* jshint : pour verifier la syntaxe js
+
+* less : pour le precompileur css
+
+* watch pour recharger le less lorsqu'on modifie un .less
