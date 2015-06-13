@@ -72,11 +72,11 @@ define([
         idConversion: function(title, company) {
             return parseInt(title) + parseInt(company);
         },
-        compareDate : function(){
-            var dateI = Moment(this.sid.get('date'));
-            var dateC = Moment(this.scb.get('postedDate'));
-            if(dateI > dateC){
-                return  dateC;
+        compareDate: function() {
+            var dateI = new Moment(this.sid.get('date'));
+            var dateC = new Moment(this.scb.get('postedDate'));
+            if (dateI > dateC) {
+                return dateC;
             } else {
                 return dateI;
             }

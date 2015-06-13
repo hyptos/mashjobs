@@ -21,7 +21,7 @@ define([
             sponsored: '',
             expired: '',
             latitude: '',
-            longitude:'',
+            longitude: '',
             totalResults: ''
         }
     });
